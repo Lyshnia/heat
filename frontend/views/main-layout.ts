@@ -6,9 +6,10 @@ import '@vaadin/vaadin-tabs';
 import '@vaadin/vaadin-tabs/vaadin-tab';
 import { customElement, html } from 'lit-element';
 import { router } from '../index';
-import { views } from '../routes';
+import {isAuthorizedViewRoute, views} from '../routes';
 import { appStore } from '../stores/app-store';
 import { Layout } from './view';
+import {logout} from "Frontend/views/auth/auth";
 
 interface RouteInfo {
   path: string;
@@ -23,7 +24,7 @@ export class MainLayout extends Layout {
         <header slot="navbar" theme="dark" class="sidemenu-header">
           <vaadin-drawer-toggle></vaadin-drawer-toggle>
           <h1>${appStore.currentViewTitle}</h1>
-          <vaadin-avatar class="ms-auto me-m"></vaadin-avatar>
+          <vaadin-button @click="${() => logout()}" class="ms-auto">Logout</vaadin-button>
         </header>
 
         <div slot="drawer" class="sidemenu-menu">
@@ -59,9 +60,10 @@ export class MainLayout extends Layout {
   }
 
   private getMenuRoutes(): RouteInfo[] {
-    return views.filter((route) => route.title) as RouteInfo[];
+    // return views.filter((route) => route.title) as RouteInfo[];
 
-    return views.filter((route) => route.title) as RouteInfo[];
+    // @ts-ignore
+    return (views.filter((route) => route.title) as RouteInfo[]).filter((route) => route.title).filter(isAuthorizedViewRoute);
   }
 
   private getSelectedViewRoute(): number {
